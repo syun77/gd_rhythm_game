@@ -1,3 +1,26 @@
-[gd_scene format=3 uid="uid://cli40jdvfeucw"]
+[gd_scene load_steps=4 format=3 uid="uid://cli40jdvfeucw"]
+
+[ext_resource type="Script" path="res://Main.gd" id="1_u6y7u"]
+[ext_resource type="LabelSettings" uid="uid://co4m7ctxgm13u" path="res://assets/fonts/font_m.tres" id="2_32pb6"]
+[ext_resource type="AudioStream" uid="uid://dk0laguc1fitm" path="res://assets/sound/bpm130_test.mp3" id="3_ylu07"]
 
 [node name="Main" type="Node2D"]
+script = ExtResource("1_u6y7u")
+
+[node name="NoteLayer" type="CanvasLayer" parent="."]
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+
+[node name="NowTime" type="Label" parent="UILayer"]
+offset_right = 40.0
+offset_bottom = 23.0
+text = "NowTIme: 00:00.000"
+label_settings = ExtResource("2_32pb6")
+
+[node name="Bpm" type="Label" parent="UILayer"]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="Bgm" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_ylu07")
+autoplay = true

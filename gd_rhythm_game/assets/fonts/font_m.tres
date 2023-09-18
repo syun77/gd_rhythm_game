@@ -1,0 +1,9 @@
+[gd_resource type="LabelSettings" load_steps=2 format=3 uid="uid://co4m7ctxgm13u"]
+
+[ext_resource type="FontFile" uid="uid://e10mbggdnrmf" path="res://assets/fonts/mplus-1m-regular.otf" id="1_nesk8"]
+
+[resource]
+font = ExtResource("1_nesk8")
+font_size = 24
+outline_size = 3
+outline_color = Color(0, 0, 0, 1)
