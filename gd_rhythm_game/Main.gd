@@ -74,6 +74,7 @@ func _update_ui() -> void:
 	_label_now_time.text = TimeMgr.time_to_str(TimeMgr.get_now_time())
 	_label_now_time.text += "/" + TimeMgr.time_to_str(TimeMgr.get_total_time())
 	_label_now_time.text += " %dBPM"%int(TimeMgr.get_bpm())
+	_label_now_time.text += " [Top]" + TimeMgr.time_to_str(TimeMgr.get_starting_display_time())
 
 ## 更新 > デバッグ.
 func _update_debug() -> void:

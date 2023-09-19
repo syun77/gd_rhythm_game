@@ -12,8 +12,10 @@ script = ExtResource("1_u6y7u")
 [node name="UILayer" type="CanvasLayer" parent="."]
 
 [node name="NowTime" type="Label" parent="UILayer"]
-offset_right = 40.0
-offset_bottom = 23.0
+offset_left = 536.0
+offset_top = 8.0
+offset_right = 752.0
+offset_bottom = 45.0
 text = "NowTIme: 00:00.000"
 label_settings = ExtResource("2_32pb6")
 

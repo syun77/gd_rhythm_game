@@ -50,6 +50,7 @@ static var _bar_beats = 4 # 4/4拍子.
 ## セットアップ.
 static func setup(audio:AudioStreamPlayer) -> void:
 	_audio = audio
+	# MP3ファイル前提.
 	var stream:AudioStreamMP3 = _audio.stream
 	_bpm = stream.bpm
 	_bar_beats = stream.bar_beats
@@ -69,6 +70,12 @@ static func get_now_beat_cnt() -> int:
 	# 時間 ÷ bps
 	return int(get_now_time() / get_beat_per_sec())
 
+## 表示開始となる時間.
+static func get_starting_display_time() -> float:
+	var now = get_now_time() # 現在時間.
+	var t = now + _top_to_now_time # 一番上となる時間.
+	return t
+
 ## BPMを取得する.
 static func get_bpm() -> float:
 	return _bpm
@@ -77,13 +84,14 @@ static func get_bpm() -> float:
 static func get_bar_beats() -> float:
 	return _bar_beats
 
-## 1拍に対応する時間を取得する.
+## 1拍に対応する時間を取得する (bps[beat/sec]).
 static func get_beat_per_sec() -> float:
-	# 60sec ÷ BPM ÷ 拍数.
-	return 60.0 / _bpm# / get_bar_beats()
+	# 60sec ÷ BPM.
+	return 60.0 / _bpm
 
 ## 基準座標.
 static func get_now_screen_ofs_y() -> float:
+	# "スコアの高さ x 現在時間の割合" が現在時間の高さ.
 	return (SCORE_HEIGHT * OFS_NOW_TIME)
 static func get_now_screen_y() -> float:
 	return SCORE_OFS_Y + get_now_screen_ofs_y()
