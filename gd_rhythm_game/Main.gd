@@ -19,6 +19,8 @@ extends Node2D
 var _is_pause = false
 ## ノート音.
 var _snd_note_list:Array[AudioStreamPlayer] = []
+## 押しているノート番号.
+var _pressed_notes:Array[bool] = []
 
 # ---------------------------------------------
 # private function.
@@ -26,7 +28,7 @@ var _snd_note_list:Array[AudioStreamPlayer] = []
 
 ## 開始.
 func _ready() -> void:
-	TimeMgr.setup(_audio, 130)
+	TimeMgr.setup(_audio)
 	for kit in [
 			"res://assets/sound/kits/909_kick.wav"
 			,"res://assets/sound/kits/909_snare.wav"
@@ -37,6 +39,9 @@ func _ready() -> void:
 		_snd_note_list.append(audio)
 		add_child(audio) # 再生できるようにする.
 
+	for i in range(TimeMgr.MAX_NOTES):
+		_pressed_notes.append(false)
+
 ## 更新.
 func _physics_process(delta: float) -> void:
 	if _is_pause:
@@ -45,8 +50,12 @@ func _physics_process(delta: float) -> void:
 		
 	for i in range(4):
 		var action = "note_%d"%i
+		_pressed_notes[i] = false
 		if Input.is_action_just_pressed(action):
 			_snd_note_list[i].play()
+		if Input.is_action_pressed(action):
+			# 押している鍵盤.
+			_pressed_notes[i] = true
 	
 	# 時間の更新.
 	TimeMgr.update(delta)
@@ -78,3 +87,8 @@ func _update_debug() -> void:
 ## 描画.
 func _draw() -> void:
 	TimeMgr.draw_score(self)
+	var idx = 0
+	for pressed in _pressed_notes:
+		if pressed:
+			TimeMgr.draw_pressed_note(self, idx)
+		idx += 1
