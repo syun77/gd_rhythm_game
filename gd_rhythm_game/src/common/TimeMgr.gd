@@ -122,6 +122,12 @@ static func draw_score(node:Node2D) -> void:
 	node.draw_rect(rect, Color.DIM_GRAY)
 	
 	# ノートの区切り線を描画.
+	for i in range(MAX_NOTES):
+		var p1 = Vector2(get_screen_note_x(i), SCORE_OFS_Y)
+		var p2 = p1 + Vector2(0, SCORE_HEIGHT)
+		var color = Color.DARK_GRAY
+		color.a = 0.2
+		node.draw_line(p1, p2, color)
 	
 	# 現在の時間のラインを描画.
 	var now = get_now_time()
