@@ -64,6 +64,11 @@ static func update(delta: float) -> void:
 static func get_now_time() -> float:
 	return _audio.get_playback_position()
 
+## 現在の拍数を取得する.
+static func get_now_beat_cnt() -> int:
+	# 時間 ÷ bps
+	return int(get_now_time() / get_beat_per_sec())
+
 ## BPMを取得する.
 static func get_bpm() -> float:
 	return _bpm
@@ -122,28 +127,16 @@ static func draw_score(node:Node2D) -> void:
 	node.draw_rect(rect, Color.DIM_GRAY)
 	
 	# ノートの区切り線を描画.
-	for i in range(MAX_NOTES):
-		var p1 = Vector2(get_screen_note_x(i), SCORE_OFS_Y)
-		var p2 = p1 + Vector2(0, SCORE_HEIGHT)
-		var color = Color.DARK_GRAY
-		color.a = 0.2
-		node.draw_line(p1, p2, color)
+	_draw_note_line(node)
 	
 	# 現在の時間のラインを描画.
-	var now = get_now_time()
 	var now_y = get_now_screen_y()
 	var p1 = Vector2(SCORE_OFS_X, now_y)
 	var p2 = Vector2(SCORE_OFS_X + SCORE_WIDTH, now_y)
 	node.draw_line(p1, p2, Color.WHITE)
 	
 	# ビートの区切り線の表示.
-	for i in range(int(get_bar_beats()) * 3):
-		var bps = get_beat_per_sec()
-		var t = now - fmod(now, bps) + bps * (i + 1)
-		var y = time_to_screen_y(t)
-		p1.y = y
-		p2.y = y
-		node.draw_line(p1, p2, Color.GRAY)
+	_draw_beat_lines(node)
 
 ## 押しているノートの表示.
 static func draw_pressed_note(node:Node2D, note_idx:int) -> void:
@@ -156,3 +149,54 @@ static func draw_pressed_note(node:Node2D, note_idx:int) -> void:
 	var color = Color.RED
 	color.a = 0.2
 	node.draw_rect(rect, color)
+
+# ---------------------------------------------
+# private functions.
+# ---------------------------------------------
+
+## ノートの区切り線を描画.
+static func _draw_note_line(node:Node2D) -> void:
+	for i in range(MAX_NOTES):
+		var p1 = Vector2(get_screen_note_x(i), SCORE_OFS_Y)
+		var p2 = p1 + Vector2(0, SCORE_HEIGHT)
+		var color = Color.DARK_GRAY
+		color.a = 0.2
+		node.draw_line(p1, p2, color)
+
+## ビートの区切り線の表示.
+static func _draw_beat_lines(node:Node2D) -> void:
+	# 現在の時間.
+	var now = get_now_time()
+	# 現在の拍数.
+	var now_cnt = get_now_beat_cnt()
+
+	# 線分のX値だけ設定.
+	var p1 = Vector2(SCORE_OFS_X, 0)
+	var p2 = Vector2(SCORE_OFS_X + SCORE_WIDTH, 0)
+
+	# 1拍あたりの秒.
+	var bps = get_beat_per_sec()
+	# 1拍ごとに点滅.
+	var blink_rate = 1 - fmod(now, bps) / bps
+	# now_normal = 現在時間 - 拍の余り = 現在時間を1拍ごとに丸めた時間
+	var now_normal = now - fmod(now, bps)
+	
+	for i in range(int(get_bar_beats()) * 3):
+		# t = now_normal + (1拍あたりの秒 * (i + 1つずらす))
+		var t = now_normal + bps * (i + 1)
+		
+		# 線分のYを設定.
+		var y = time_to_screen_y(t)
+		p1.y = y
+		p2.y = y
+		
+		# 基本の色を設定
+		var color = Color.GRAY
+		color.a = 0.2
+		# 点滅の色をブレンド.
+		color = color.lerp(Color.YELLOW, 0.5 * blink_rate)
+		if (now_cnt + i + 1)%int(get_bar_beats()) == 0:
+			# 1拍目の色を強調する.
+			color.a = 1
+		# 描画.
+		node.draw_line(p1, p2, color)
