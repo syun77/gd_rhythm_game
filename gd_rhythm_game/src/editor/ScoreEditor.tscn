@@ -1,6 +1,12 @@
-[gd_scene load_steps=2 format=3 uid="uid://bo32q687iblww"]
+[gd_scene load_steps=5 format=3 uid="uid://bo32q687iblww"]
 
 [ext_resource type="Script" path="res://src/editor/ScoreEditor.gd" id="1_aurr8"]
+[ext_resource type="FontFile" uid="uid://e10mbggdnrmf" path="res://assets/fonts/mplus-1m-regular.otf" id="2_n8see"]
+[ext_resource type="LabelSettings" uid="uid://co4m7ctxgm13u" path="res://assets/fonts/font_m.tres" id="3_uy1hj"]
+
+[sub_resource type="Theme" id="Theme_nj2ls"]
+default_font = ExtResource("2_n8see")
+default_font_size = 32
 
 [node name="ScoreEditor" type="Node2D"]
 script = ExtResource("1_aurr8")
@@ -17,4 +23,21 @@ offset_top = 48.0
 offset_right = 552.0
 offset_bottom = 600.0
 
+[node name="ButtonSave" type="Button" parent="UILayer"]
+offset_left = 960.0
+offset_top = 48.0
+offset_right = 1064.0
+offset_bottom = 80.0
+theme = SubResource("Theme_nj2ls")
+text = "SAVE"
+
+[node name="LabelDebug" type="Label" parent="UILayer"]
+offset_left = 688.0
+offset_top = 160.0
+offset_right = 728.0
+offset_bottom = 183.0
+text = "デバッグ情報"
+label_settings = ExtResource("3_uy1hj")
+
 [connection signal="value_changed" from="UILayer/TimeSlider" to="." method="_on_time_slider_value_changed"]
+[connection signal="pressed" from="UILayer/ButtonSave" to="." method="_on_button_save_pressed"]
