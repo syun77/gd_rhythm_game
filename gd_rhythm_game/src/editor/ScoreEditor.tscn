@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=3 uid="uid://bo32q687iblww"]
+
+[ext_resource type="Script" path="res://src/editor/ScoreEditor.gd" id="1_aurr8"]
+
+[node name="ScoreEditor" type="Node2D"]
+script = ExtResource("1_aurr8")
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+
+[node name="BaseTime" type="Label" parent="UILayer"]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="TimeSlider" type="VSlider" parent="UILayer"]
+offset_left = 480.0
+offset_top = 48.0
+offset_right = 552.0
+offset_bottom = 600.0
+
+[connection signal="value_changed" from="UILayer/TimeSlider" to="." method="_on_time_slider_value_changed"]

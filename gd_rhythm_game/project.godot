@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="gd_rhythm_game"
-run/main_scene="res://Main.tscn"
+run/main_scene="res://src/editor/ScoreEditor.tscn"
 config/features=PackedStringArray("4.1", "Forward Plus")
 config/icon="res://icon.svg"
 
