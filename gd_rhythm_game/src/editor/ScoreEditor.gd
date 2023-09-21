@@ -106,6 +106,14 @@ func _update_ui() -> void:
 	var pos = get_global_mouse_position()
 	var p = _screen_to_score_pos(pos)
 	_label_debug.text = "%d,%d"%[p.x, p.y]
+	_label_debug.text += "\n"
+	var bar = int(p.y / _bar_beats)
+	var bar_upper = int(bar / 4) + 1
+	var bar_lower = (bar % 4) + 1
+	_label_debug.text += "bar:%d (%d.%d)"%[(bar+1), bar_upper, bar_lower]
+	_label_debug.text += "\n"
+	var bar_pos = p.y%int(_bar_beats) + 1
+	_label_debug.text += "pos:%d"%bar_pos
 
 ## 描画.
 func _draw() -> void:
