@@ -114,6 +114,7 @@ func _update_ui() -> void:
 	_label_debug.text += "\n"
 	var bar_pos = p.y%int(_bar_beats) + 1
 	_label_debug.text += "pos:%d"%bar_pos
+	_label_debug.text += "\nbps:%f"%_bps
 
 ## 描画.
 func _draw() -> void:
@@ -195,7 +196,7 @@ func _draw_grid_horizontal() -> void:
 		p1.y = py
 		p2.y = py
 		var color = Color.GRAY
-		var beats = int(t / _bps)
+		var beats = _time_to_bar(t)
 		if beats%(_bar_beats*4) == 0:
 			# 1小節.
 			color.a = 1.0
@@ -246,8 +247,9 @@ func _get_score_path() -> String:
 	return PATH_SCORE
 
 ## 時間を拍に変更する.
-func _time_to_bar(time:float) -> float:
-	return time / _bps
+func _time_to_bar(time:float) -> int:
+	var space = 0.001 # 計算誤差回避用.
+	return (time + space) / _bps
 
 # ---------------------------------------------
 # signal.

@@ -6,10 +6,11 @@
 4: true,
 8: true,
 12: true,
-65: true,
-69: true,
-73: true,
-77: true
+32: true,
+36: true,
+40: true,
+44: true,
+48: true
 },
 1: {},
 2: {},
