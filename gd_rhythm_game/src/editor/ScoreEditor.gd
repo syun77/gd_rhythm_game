@@ -21,13 +21,17 @@ const SCORE_UNIT = 32 # 32分音符を最小単位とする.
 # ---------------------------------------------
 # var.
 # ---------------------------------------------
-var _base_time = 0.0
+## 基準
+var _base_time = 0.0 # 時間.
+var _base_bar = 0.0 # 拍
+
 var _beat_h = 32.0 # 1拍あたりのノートの高さ.
 var _bpm = 130.0
 var _total_time = 60 * 3
 var _bps = 1.0
 var _bar_beats = 4 # 4/4拍子.
 var _score_data = {}
+var _anim_timer = 0.0
 
 # ---------------------------------------------
 # private function.
@@ -44,6 +48,8 @@ func _ready() -> void:
 
 ## 更新.
 func _process(delta: float) -> void:
+	_anim_timer += delta
+	
 	_update_click()
 	
 	# UIの更新.
@@ -109,6 +115,9 @@ func _draw() -> void:
 	
 	# ノートの描画.
 	_draw_notes()
+	
+	# カーソルの描画.
+	_draw_cursor()
 
 ## 時間に対応するスクリーン座標(Y).
 func _time_to_screen_y(t:float) -> float:
@@ -128,6 +137,8 @@ func _screen_to_score_pos(pos:Vector2) -> Vector2i:
 	if dy < 0 or SCORE_HEIGHT < dy:
 		return Vector2i.ONE * -1
 	
+	# スクロールを考慮.
+	dy -= (_base_bar * _get_note_height())
 	# 逆順になる
 	dy = SCORE_HEIGHT - dy
 		
@@ -141,8 +152,10 @@ func _score_pos_to_screen(note_idx:int, pos:int) -> Vector2i:
 	var ret = Vector2i()
 	ret.x = OFS_X + (note_idx * _get_note_width())
 	ret.y = OFS_Y
+	# スクロールを考慮.
+	var pos2 = (pos - _base_bar)
 	# 逆順になる.
-	ret.y += SCORE_HEIGHT - (pos * _get_note_height())
+	ret.y += SCORE_HEIGHT - (pos2 * _get_note_height())
 	return ret
 
 ## ノート1つあたりの幅.
@@ -202,8 +215,31 @@ func _draw_notes() -> void:
 			var color = Color.WHITE
 			color.a = 0.5
 			draw_rect(rect, color)
+
+## カーソルの描画.
+func _draw_cursor() -> void:
+	var mouse = get_global_mouse_position()
+	var pos = _screen_to_score_pos(mouse)
+	if pos.x < 0:
+		return # 譜面の範囲外.
+	
+	var p = _score_pos_to_screen(pos.x, pos.y)
+	var rect = Rect2(0, 0, _get_note_width(), _get_note_height())
+	# 下から描画しているので1つずれる.
+	p.y -= _get_note_height()
+	rect.position.x = p.x
+	rect.position.y = p.y
+	var color = Color.YELLOW
+	color.a = 0.8 + (0.2 * sin(_anim_timer * 4))
+	draw_rect(rect, color, false)
 			
-		
+## 譜面データのパスを取得する.
+func _get_score_path() -> String:
+	return PATH_SCORE
+
+## 時間を拍に変更する.
+func _time_to_bar(time:float) -> float:
+	return time / _bps
 
 # ---------------------------------------------
 # signal.
@@ -212,6 +248,9 @@ func _draw_notes() -> void:
 ## 時間スライダーの値が変化した.
 func _on_time_slider_value_changed(value: float) -> void:
 	_base_time = value
+	# 正規化.
+	_base_time -= fmod(_base_time, _bps)
+	_base_bar = _time_to_bar(_base_time)
 
 ## SAVEボタンを押した.
 func _on_button_save_pressed() -> void:
@@ -219,7 +258,23 @@ func _on_button_save_pressed() -> void:
 	var data = {}
 	data["bpm"] = _bpm
 	data["score"] = _score_data
+	# 文字列に変換.
 	var s = var_to_str(data)
 	print(s)
 	file.store_string(s)
 	file.close()
+
+## LOADボタンを押した.
+func _on_button_load_pressed() -> void:
+	var path = _get_score_path()
+	if FileAccess.file_exists(path) == false:
+		push_warning("%sは存在しません"%path)
+		return
+		
+	var file = FileAccess.open(PATH_SCORE, FileAccess.READ)
+	var s = file.get_as_text()
+	file.close()
+	# 文字列から辞書型に変換.
+	var data = str_to_var(s)
+	_bpm = float(data["bpm"])
+	_score_data = data["score"]
