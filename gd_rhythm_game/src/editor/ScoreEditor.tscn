@@ -47,6 +47,14 @@ offset_bottom = 183.0
 text = "デバッグ情報"
 label_settings = ExtResource("3_uy1hj")
 
+[node name="Filename" type="TextEdit" parent="UILayer"]
+offset_left = 912.0
+offset_top = 216.0
+offset_right = 1104.0
+offset_bottom = 248.0
+text = "001"
+placeholder_text = "ファイル名 (拡張子不要)"
+
 [connection signal="value_changed" from="UILayer/TimeSlider" to="." method="_on_time_slider_value_changed"]
 [connection signal="pressed" from="UILayer/ButtonSave" to="." method="_on_button_save_pressed"]
 [connection signal="pressed" from="UILayer/ButtonLoad" to="." method="_on_button_load_pressed"]

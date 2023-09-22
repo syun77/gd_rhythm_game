@@ -5,7 +5,7 @@ extends Node2D
 # ---------------------------------------------
 # const.
 # ---------------------------------------------
-const PATH_SCORE = "res://assets/scores/1.txt"
+const DIR_SCORE = "res://assets/scores/"
 const OFS_X = 64
 const OFS_Y = 0
 const SCORE_WIDTH = 320
@@ -17,6 +17,7 @@ const SCORE_UNIT = 32 # 32分音符を最小単位とする.
 # ---------------------------------------------
 @onready var _label_base_time = $UILayer/BaseTime
 @onready var _label_debug = $UILayer/LabelDebug
+@onready var _txt_filename = $UILayer/Filename
 
 # ---------------------------------------------
 # var.
@@ -244,7 +245,14 @@ func _draw_cursor() -> void:
 			
 ## 譜面データのパスを取得する.
 func _get_score_path() -> String:
-	return PATH_SCORE
+	var path = DIR_SCORE
+	var file = _txt_filename.text
+	if file == "":
+		path += "001"
+	else:
+		path += file
+	path += ".txt"
+	return path
 
 ## 時間を拍に変更する.
 func _time_to_bar(time:float) -> int:
@@ -264,7 +272,7 @@ func _on_time_slider_value_changed(value: float) -> void:
 
 ## SAVEボタンを押した.
 func _on_button_save_pressed() -> void:
-	var file = FileAccess.open(PATH_SCORE, FileAccess.WRITE)
+	var file = FileAccess.open(_get_score_path(), FileAccess.WRITE)
 	var data = {}
 	data["bpm"] = _bpm
 	data["score"] = _score_data
@@ -281,7 +289,7 @@ func _on_button_load_pressed() -> void:
 		push_warning("%sは存在しません"%path)
 		return
 		
-	var file = FileAccess.open(PATH_SCORE, FileAccess.READ)
+	var file = FileAccess.open(path, FileAccess.READ)
 	var s = file.get_as_text()
 	file.close()
 	# 文字列から辞書型に変換.
