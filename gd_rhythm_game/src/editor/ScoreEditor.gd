@@ -12,12 +12,21 @@ const SCORE_WIDTH = 320
 const SCORE_HEIGHT = 600
 const SCORE_UNIT = 32 # 32分音符を最小単位とする.
 
+## 状態.
+enum eState {
+	MAIN, # メイン.
+	PREVIEW, # プレビュー再生中.
+}
+
 # ---------------------------------------------
 # onready.
 # ---------------------------------------------
 @onready var _label_base_time = $UILayer/BaseTime
 @onready var _label_debug = $UILayer/LabelDebug
-@onready var _txt_filename = $UILayer/Filename
+@onready var _txt_filename = $UILayer/Main/Filename
+@onready var _instruments = $UILayer/Instruments
+@onready var _btn_preview = $UILayer/ButtonPreview
+@onready var _ui_main = $UILayer/Main
 
 # ---------------------------------------------
 # var.
@@ -34,6 +43,8 @@ var _bar_beats = 4 # 4/4拍子.
 var _score_data = {}
 var _anim_timer = 0.0
 
+var _state = eState.MAIN # 状態.
+
 # ---------------------------------------------
 # private function.
 # ---------------------------------------------
@@ -46,18 +57,43 @@ func _ready() -> void:
 		# ノート番号ごとに管理する.
 		var notes = {}
 		_score_data[i] = notes
+	
+	# 楽器を設定.
+	var idx = 0
+	for ui in _instruments.get_children():
+		var opt = ui as OptionButton
+		for key in Common.eDefaultSe.keys():
+			opt.add_item(key)
+		opt.selected = idx
+		idx += 1
+	
+	# 共通モジュールをセットアップ.
+	Common.setup(self, [])
 
 ## 更新.
 func _process(delta: float) -> void:
-	_anim_timer += delta
-	
-	_update_click()
+	match _state:
+		eState.MAIN:
+			_update_main(delta)
+		eState.PREVIEW:
+			_update_preview(delta)
 	
 	# UIの更新.
 	_update_ui()
 	
 	# _draw()を呼び出す.
 	queue_redraw()
+
+## 更新 > メイン.
+func _update_main(delta:float) -> void:
+	_anim_timer += delta
+	
+	_update_click()
+
+## 更新 > プレビュー.
+func _update_preview(delta:float) -> void:
+	_base_time += delta
+	_base_bar = _time_to_bar(_base_time)
 
 ## クリック処理.
 func _update_click() -> void:
@@ -296,3 +332,18 @@ func _on_button_load_pressed() -> void:
 	var data = str_to_var(s)
 	_bpm = float(data["bpm"])
 	_score_data = data["score"]
+
+## PREVIEWボタンを押した
+func _on_button_preview_pressed() -> void:
+	if _state == eState.MAIN:
+		# プレビュー開始.
+		_state = eState.PREVIEW
+		_ui_main.visible = false # 一部のUIを非表示.
+		_btn_preview.text = "STOP"
+	else:
+		# プレビュー停止.
+		_state = eState.MAIN
+		_ui_main.visible = true # 再表示.
+		_btn_preview.text = "PREVIEW"
+		# 時間を丸める.
+		_on_time_slider_value_changed(_base_time)

@@ -1,13 +1,45 @@
 {
 "bpm": 130.0,
 "score": {
-0: {},
-1: {
+0: {
+0: true,
+4: true,
 8: true,
-14: true
+12: true,
+16: true,
+20: true,
+24: true,
+28: true,
+32: true,
+36: true,
+40: true,
+44: true,
+48: true
 },
-2: {},
-3: {},
+1: {
+36: true,
+44: true
+},
+2: {
+2: true,
+6: true,
+10: true,
+14: true,
+18: true,
+22: true,
+26: true,
+30: true,
+32: true,
+36: true,
+40: true,
+44: true
+},
+3: {
+34: true,
+38: true,
+42: true,
+46: true
+},
 4: {},
 5: {},
 6: {}

@@ -11,11 +11,18 @@ const MAX_SOUND = 32
 ## サウンドのデフォルトのdB
 const DEFAULT_DB = -6.0
 
+enum eDefaultSe {
+	KICK,
+	SNARE,
+	CH,
+	OH,
+}
+
 const DEFAULT_SE_TBL = {
-	"kick": "res://assets/sound/kits/909_kick.wav",
-	"snare": "res://assets/sound/kits/909_snare.wav",
-	"ch": "res://assets/sound/kits/909_CH.wav",
-	"oh": "res://assets/sound/kits/909_OH.wav",
+	"KICK": "res://assets/sound/kits/909_kick.wav",
+	"SNARE": "res://assets/sound/kits/909_snare.wav",
+	"CH": "res://assets/sound/kits/909_CH.wav",
+	"OH": "res://assets/sound/kits/909_OH.wav",
 }
 
 # ------------------------------------------------------
