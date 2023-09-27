@@ -92,8 +92,16 @@ func _update_main(delta:float) -> void:
 
 ## 更新 > プレビュー.
 func _update_preview(delta:float) -> void:
-	_base_time += delta
+	_base_time += delta * _bar_beats
+	var prev = _base_bar
 	_base_bar = _time_to_bar(_base_time)
+	var now = _base_bar
+	if prev != now:
+		# 拍が変わったら再生チェック.
+		for note_idx in range(TimeMgr.MAX_NOTES):
+			if _get_note(note_idx, now):
+				# 再生.
+				_play_se_note(note_idx)
 
 ## クリック処理.
 func _update_click() -> void:
@@ -108,7 +116,22 @@ func _update_click() -> void:
 	
 	# 配置済みなら削除。そうでなければ配置.
 	var b = _get_note(pos.x, pos.y)
-	_set_note(pos.x, pos.y, !b)
+	if _set_note(pos.x, pos.y, !b):
+		# 配置した.
+		_play_se_note(pos.x)
+
+## 指定のノートを描画.
+func _play_se_note(note_idx:int) -> void:
+	var inst_name = _get_instrument_name(note_idx)
+	Common.play_se_by_name(inst_name, note_idx)
+
+## 楽器名を取得
+func _get_instrument_name(note_idx:int) -> String:
+	if note_idx < 0 or TimeMgr.MAX_NOTES <= note_idx:
+		return "KICK" # 領域外.
+	var instrument = _instruments.get_child(note_idx) as OptionButton
+	var idx = instrument.selected
+	return Common.eDefaultSe.keys()[idx]
 	
 	
 ## 指定の位置にノートが配置されているかどうか.
@@ -123,19 +146,23 @@ func _get_note(note_idx:int, pos:int) -> bool:
 		return true
 	return false
 
-func _set_note(note_idx:int, pos:int, b:bool) -> void:
+## ノートの配置.
+## @return 配置できたらtrue
+func _set_note(note_idx:int, pos:int, b:bool) -> bool:
 	if note_idx < 0 or TimeMgr.MAX_NOTES <= note_idx:
-		return # 領域外.
+		return false # 領域外.
 	if pos < 0:
-		return # 領域外.
+		return false # 領域外.
 	
 	var notes = _score_data[note_idx]
 	if b:
 		# 配置
 		notes[pos] = true
+		return true
 	else:
 		# 削除.
 		notes.erase(pos)
+		return false
 
 ## UIの更新.
 func _update_ui() -> void:
@@ -340,6 +367,7 @@ func _on_button_preview_pressed() -> void:
 		_state = eState.PREVIEW
 		_ui_main.visible = false # 一部のUIを非表示.
 		_btn_preview.text = "STOP"
+		_base_bar -= 1 # 最初のノートを鳴らしたい.
 	else:
 		# プレビュー停止.
 		_state = eState.MAIN

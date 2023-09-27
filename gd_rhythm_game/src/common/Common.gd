@@ -28,7 +28,7 @@ const DEFAULT_SE_TBL = {
 # ------------------------------------------------------
 # var.
 # ------------------------------------------------------
-var _snds:Array[AudioStream] = []
+var _snds:Array[AudioStreamPlayer] = []
 var _layers:Array[CanvasLayer] = []
 
 # ------------------------------------------------------
@@ -37,13 +37,15 @@ var _layers:Array[CanvasLayer] = []
 ## セットアップ.
 func setup(root:Node2D, layers:Array[CanvasLayer]) -> void:
 	_layers = layers
+	# サウンドの生成.
+	_create_snd(root)
 
 ## サウンドの事前読み込み.
 func preload_snd(idx:int, path:String) -> void:
 	if idx < 0 or MAX_SOUND <= idx:
 		push_error("不正なサウンドIndex: %d"%idx)
 		return	
-	var snd:AudioStream = _snds[idx]
+	var snd:AudioStreamPlayer = _snds[idx]
 	snd.stream = load(path)
 
 ## サウンドの再生.
