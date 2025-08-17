@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://dtyxybk1wodqw"]
 
-[ext_resource type="Script" path="res://src/NoteObj.gd" id="1_71iq5"]
-[ext_resource type="Texture2D" uid="uid://r8ibgangt43r" path="res://assets/images/note.png" id="1_pbo4b"]
+[ext_resource type="Script" uid="uid://yf2t1bvdjs7v" path="res://src/NoteObj.gd" id="1_71iq5"]
+[ext_resource type="Texture2D" uid="uid://cx2nljgvhkitf" path="res://assets/images/note.png" id="1_pbo4b"]
 
 [node name="NoteObj" type="Node2D"]
 script = ExtResource("1_71iq5")

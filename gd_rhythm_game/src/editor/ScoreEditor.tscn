@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://bo32q687iblww"]
 
-[ext_resource type="Script" path="res://src/editor/ScoreEditor.gd" id="1_aurr8"]
-[ext_resource type="FontFile" uid="uid://e10mbggdnrmf" path="res://assets/fonts/mplus-1m-regular.otf" id="2_n8see"]
+[ext_resource type="Script" uid="uid://cvg8fq1kc27uu" path="res://src/editor/ScoreEditor.gd" id="1_aurr8"]
+[ext_resource type="FontFile" uid="uid://dibs1wugnrhnt" path="res://assets/fonts/mplus-1m-regular.otf" id="2_n8see"]
 [ext_resource type="LabelSettings" uid="uid://co4m7ctxgm13u" path="res://assets/fonts/font_m.tres" id="3_uy1hj"]
 
 [sub_resource type="Theme" id="Theme_nj2ls"]
